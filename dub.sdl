@@ -1,0 +1,29 @@
+name "rocksteady"
+description "D implementation of Build Systems a la carte"
+authors "Atila Neves"
+copyright "Copyright © 2019, Atila Neves"
+license "boost"
+
+targetType "executable"
+targetPath "bin"
+
+
+configuration "executable" {
+
+}
+
+
+configuration "library" {
+    targetType "library"
+    excludedSourceFiles "source/main.d"
+}
+
+
+configuration "unittest" {
+    targetName "ut"
+    excludedSourceFiles "source/main.d"
+    mainSourceFile "tests/main.d"
+    sourcePaths "tests"
+
+    dependency "unit-threaded" version="*"
+}
