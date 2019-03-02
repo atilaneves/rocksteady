@@ -13,10 +13,10 @@ import ut;
     alias Fetch = int delegate(in string) @safe pure;
     alias MaybeTask = Nullable!(int delegate(Fetch) @safe pure);
 
-    static MaybeTask cells(in string cellName) @trusted /* toDelegate */ {
+    static MaybeTask formulae(in string cellName) @trusted /* toDelegate */ {
         switch(cellName) {
 
-        default:
+        default:  // leaf node
             return typeof(return).init;
 
         case "B1": // B1: A1 + A2
@@ -29,7 +29,7 @@ import ut;
 
     auto store = StoreAA!(string, int)(["A1": 10, "A2": 20]);
 
-    auto b = busy(&cells, store);
+    auto b = busy!formulae(store);
     store.values.should == ["A1": 10, "A2": 20]; // nothing happened yet
 
     b.build("B2");

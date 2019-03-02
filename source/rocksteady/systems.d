@@ -12,7 +12,7 @@ module rocksteady.systems;
        key = The key to compute the value of.
        store = The backing store to affect.
  */
-auto busy(T, S)(T tasks, ref S store)
+auto busy(alias tasks, S)(ref S store)
     @safe pure  // FIXME: why is this not being inferred?
 {
     struct Build {
