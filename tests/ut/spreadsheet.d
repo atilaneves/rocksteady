@@ -10,29 +10,27 @@ import ut;
     import std.typecons: nullable, Nullable;
     import std.functional: toDelegate;
 
-    alias Fetch = int delegate(in string) @safe pure;
-    alias MaybeTask = Nullable!(int delegate(Fetch) @safe pure);
+    alias MaybeTask = Nullable!(int delegate() @safe pure);
 
-    static MaybeTask formulae(in string cellName) @trusted /* toDelegate */ {
+    static MaybeTask formulae(F)(in string cellName, F fetch) {
         switch(cellName) {
 
         default:  // leaf node
             return typeof(return).init;
 
         case "B1": // B1: A1 + A2
-            return nullable(((Fetch fetch) => fetch("A1") + fetch("A2")).toDelegate);
+            return nullable(() => fetch("A1") + fetch("A2"));
 
         case "B2": // B2: B1 * 2
-            return nullable(((Fetch fetch) => fetch("B1") * 2).toDelegate);
+            return nullable(() => fetch("B1") * 2);
         }
     }
 
-    auto store = StoreAA!(string, int)(["A1": 10, "A2": 20]);
-
+    auto store = ["A1": 10, "A2": 20];
     auto b = busy!formulae(store);
-    store.values.should == ["A1": 10, "A2": 20]; // nothing happened yet
+    store.should == ["A1": 10, "A2": 20]; // nothing happened yet
 
     b.build("B2");
     // Should have built B1 as part of building B2
-    store.values.should == [ "A1": 10, "A2": 20, "B1": 30, "B2": 60];
+    store.should == [ "A1": 10, "A2": 20, "B1": 30, "B2": 60];
 }

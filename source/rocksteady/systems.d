@@ -17,18 +17,20 @@ auto busy(alias tasks, S)(ref S store)
 {
     struct Build {
 
-        S.Value build(in S.Key key) @safe pure const {
-            auto maybeTask = tasks(key);
-            if(maybeTask.isNull) return store.get(key);
+        import rocksteady.traits: KeyType, ValueType;
 
-            auto task = maybeTask.get;
+        ValueType!S build(in KeyType!S key) @safe pure const {
 
-            S.Value fetch(in S.Key key) {
+            ValueType!S fetch(in KeyType!S key) {
                 return build(key);
             }
 
-            auto newValue = task(&fetch);
-            store.put(key, newValue);
+            auto maybeTask = tasks(key, &fetch);
+            if(maybeTask.isNull) return store[key];
+
+            auto task = maybeTask.get;
+            auto newValue = task();
+            store[key] = newValue;
 
             return newValue;
         }
