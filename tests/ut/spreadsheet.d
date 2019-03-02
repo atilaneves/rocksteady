@@ -7,8 +7,7 @@ import ut;
 @("paper")
 @safe pure unittest {
 
-    import std.typecons: nullable, Nullable;
-    import std.functional: toDelegate;
+    import std.typecons: nullable;
 
     static MaybeTask!int formulae(F)(in string cellName, F fetch) {
         switch(cellName) {
