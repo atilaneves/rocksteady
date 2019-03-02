@@ -29,6 +29,10 @@ import ut;
 
     auto store = StoreAA!(string, int)(["A1": 10, "A2": 20]);
 
-    busy(&cells, "B2", store);
+    auto b = busy(&cells, store);
+    store.values.should == ["A1": 10, "A2": 20]; // nothing happened yet
+
+    b.build("B2");
+    // Should have built B1 as part of building B2
     store.values.should == [ "A1": 10, "A2": 20, "B1": 30, "B2": 60];
 }
