@@ -28,7 +28,7 @@ auto busy(alias tasks, S)(ref S store)
             }
 
             auto newValue = task(&fetch);
-            store.store(key, newValue);
+            store.put(key, newValue);
 
             return newValue;
         }

@@ -10,5 +10,5 @@ struct StoreAA(K, V) {
     Value[Key] values;
 
     Value get(in Key key) const { return values[key]; }
-    void store(in Key key, Value value) { values[key] = value; }
+    void put(in Key key, Value value) { values[key] = value; }
 }
