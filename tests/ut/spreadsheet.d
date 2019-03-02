@@ -10,44 +10,49 @@ import ut;
     import std.typecons: nullable, Nullable;
     import std.functional: toDelegate;
 
-    static auto cells(in string cellName) {
+    static auto cells(in string cellName) @trusted /* toDelegate */ {
         switch(cellName) {
 
         default:
-            return Nullable!(int delegate(int delegate(string) @safe) @safe)();
+            return Nullable!(int delegate(int delegate(in string) @safe pure) @safe pure)();
 
-        case "B1":
-            // B1: A1 + A2
-            return nullable(((int delegate(string) @safe fetch) => fetch("A1") + fetch("A2")).toDelegate);
+        case "B1": // B1: A1 + A2
+            return nullable(((int delegate(in string) @safe pure fetch) => fetch("A1") + fetch("A2")).toDelegate);
 
-        case "B2":
-            // B2: B1 * 2
-            return nullable(((int delegate(string) @safe fetch) => fetch("A1") + fetch("A2")).toDelegate);
+        case "B2": // B2: B1 * 2
+            return nullable(((int delegate(in string) @safe pure fetch) => fetch("B1") * 2).toDelegate);
         }
     }
 
+    static void busy(T, K, S)(T tasks, in K key, ref S store) pure {
 
-    static auto busy(T, K, S)(T tasks, in K key, ref S store) {
-        auto update = tasks(key);
-        if(update.isNull) return store.getValue(key);
-        auto updateFunc = update.get;
-        pragma(msg, "updateFunc type: ", typeof(updateFunc));
-        auto fetch = (&busy!(T, K, S)).toDelegate;
-        pragma(msg, "fetch type: ", typeof(fetch));
-        auto newValue = updateFunc(fetch);
-        store.storeValue(key, newValue);
+        S.Value fetch(in K key) @safe pure {
+            auto maybeTask = tasks(key);
+            if(maybeTask.isNull) return store.get(key);
+
+            auto task = maybeTask.get;
+            auto newValue = task(&fetch);
+            store.store(key, newValue);
+
+            return newValue;
+        }
+
+        fetch(key);
     }
 
     static struct Store {
+
+        alias Key = string;
+        alias Value = int;
+
         int[string] values;
 
-        int getValue(in string key) @safe pure const { return values[key]; }
-        void storeValue(in string key, in int value) @safe pure { values[key] = value; }
+        int get(in string key) @safe pure const { return values[key]; }
+        void store(in string key, in int value) @safe pure { values[key] = value; }
     }
 
-    auto store = Store();
-    store.storeValue("A1", 10);
-    store.storeValue("A2", 20);
+    auto store = Store(["A1": 10, "A2": 20]);
 
     busy(&cells, "B2", store);
+    store.values.should == [ "A1": 10, "A2": 20, "B1": 30, "B2": 60];
 }
