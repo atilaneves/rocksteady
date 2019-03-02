@@ -24,6 +24,7 @@ configuration "unittest" {
     excludedSourceFiles "source/main.d"
     mainSourceFile "tests/main.d"
     sourcePaths "tests"
+    importPaths "tests"
 
     dependency "unit-threaded" version="*"
 }
