@@ -10,9 +10,7 @@ import ut;
     import std.typecons: nullable, Nullable;
     import std.functional: toDelegate;
 
-    alias MaybeTask = Nullable!(int delegate() @safe pure);
-
-    static MaybeTask formulae(F)(in string cellName, F fetch) {
+    static MaybeTask!int formulae(F)(in string cellName, F fetch) {
         switch(cellName) {
 
         default:  // leaf node
@@ -28,7 +26,7 @@ import ut;
 
     auto store = ["A1": 10, "A2": 20];
     auto b = busy!formulae(store);
-    store.should == ["A1": 10, "A2": 20]; // nothing happened yet
+    store.should == ["A1": 10, "A2": 20];  // nothing happened yet
 
     b.build("B2");
     // Should have built B1 as part of building B2
