@@ -9,17 +9,17 @@ import ut;
 
     import std.typecons: nullable;
 
-    static MaybeTask!int formulae(F)(in string cellName, F fetch) {
+    static MaybeTask!int formulae(B)(auto ref B bs, in string cellName) {
         switch(cellName) {
 
         default:  // leaf node
             return typeof(return).init;
 
         case "B1": // B1: A1 + A2
-            return nullable(() => fetch("A1") + fetch("A2"));
+            return nullable(() => bs.fetch("A1") + bs.fetch("A2"));
 
         case "B2": // B2: B1 * 2
-            return nullable(() => fetch("B1") * 2);
+            return nullable(() => bs.fetch("B1") * 2);
         }
     }
 
@@ -38,17 +38,17 @@ import ut;
 
     import std.typecons: nullable;
 
-    static MaybeTask!int formulae(F)(in string cellName, F fetch) {
+    static MaybeTask!int formulae(B)(auto ref B bs, in string cellName) {
         switch(cellName) {
 
         default:  // leaf node
             return typeof(return).init;
 
         case "B1": // B1: IF(C1=1,B2,A2)
-            return nullable(() => fetch("C1") == 1 ? fetch("B2") : fetch("A2"));
+            return nullable(() => bs.fetch("C1") == 1 ? bs.fetch("B2") : bs.fetch("A2"));
 
         case "B2": // B2: IF(C1=1,A1,B1)
-            return nullable(() => fetch("C1") == 1 ? fetch("A1") : fetch("B1"));
+            return nullable(() => bs.fetch("C1") == 1 ? bs.fetch("A1") : bs.fetch("B1"));
         }
     }
 

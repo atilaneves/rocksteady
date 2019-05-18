@@ -21,7 +21,7 @@ auto busy(alias tasks, S)(ref S store)
 
         ValueType!S build(in KeyType!S key) @safe pure const {
 
-            auto maybeTask = tasks(key, &build /* build is fetch */);
+            auto maybeTask = tasks(this, key);
             if(maybeTask.isNull) return store[key];
 
             auto task = maybeTask.get;
@@ -30,6 +30,8 @@ auto busy(alias tasks, S)(ref S store)
 
             return newValue;
         }
+
+        alias fetch = build;
     }
 
     return Build();

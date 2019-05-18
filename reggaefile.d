@@ -7,8 +7,6 @@ enum debugFlags = ["-g", "-debug"];
 
 alias ut = dubTestTarget!(
     CompilerFlags(debugFlags),
-    LinkerFlags(),
-    CompilationMode.package_,
 );
 
 
