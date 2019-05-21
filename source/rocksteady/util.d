@@ -3,8 +3,6 @@ module rocksteady.util;
 
 K[] dependencies(alias tasks, V, K)(in K key) @safe pure {
 
-    import rocksteady.traits: MaybeTask;
-
     K[] ret;
 
     V fetch(in K key) {

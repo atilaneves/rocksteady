@@ -9,7 +9,6 @@ module rocksteady.systems;
 
    Params:
        tasks = Takes a key and returns a Nullable!Task.
-       key = The key to compute the value of.
        store = The backing store to affect.
  */
 auto busy(alias tasks, S)(ref S store)
