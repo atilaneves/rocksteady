@@ -21,3 +21,8 @@ template ValueType(S) {
     } else
         alias ValueType = S.Value;
 }
+
+
+template TaskType(V) {
+    alias TaskType = V delegate() @safe pure;
+}

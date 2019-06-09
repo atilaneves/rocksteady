@@ -2,9 +2,9 @@ module rocksteady.types;
 
 
 template MaybeTask(V) {
+    import rocksteady.traits: TaskType;
     import sumtype: SumType;
-    alias Task = V delegate() @safe pure;
-    alias MaybeTask = SumType!(Task, Leaf);
+    alias MaybeTask = SumType!(TaskType!V, Leaf);
 }
 
 

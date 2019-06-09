@@ -15,7 +15,7 @@ auto busy(alias tasks, S)(ref S store)
 {
     struct Build {
 
-        import rocksteady.traits: KeyType, ValueType;
+        import rocksteady.traits: KeyType, ValueType, TaskType;
 
         ValueType!S build(in KeyType!S key) @safe pure const {
 
@@ -29,7 +29,7 @@ auto busy(alias tasks, S)(ref S store)
                     // it's a leaf node aka input key, just return it
                     return store[key];
                 },
-                (ValueType!S delegate() @safe pure task) {
+                (TaskType!(ValueType!S) task) {
                     // it's an actual task, run it and store the new value
                     auto newValue = task();
                     store[key] = newValue;
