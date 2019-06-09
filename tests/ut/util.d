@@ -8,19 +8,19 @@ import ut;
 @safe pure unittest {
     import std.typecons: nullable;
 
-    static MaybeTask!int formulae(F)(in string cellName, F fetch) {
+    static MaybeTask!int spreadsheet(F)(in string cellName, F fetch) {
         switch(cellName) {
 
         default:  // leaf node
-            return typeof(return).init;
+            return leaf!int;
 
         case "B1": // B1: A1 + A2
-            return nullable(() => fetch("A1") + fetch("A2"));
+            return task(() => fetch("A1") + fetch("A2"));
 
         case "B2": // B2: B1 * 2
-            return nullable(() => fetch("B1") * 2);
+            return task(() => fetch("B1") * 2);
         }
     }
 
-    dependencies!(formulae, int)("B1").should == ["A1", "A2"];
+    dependencies!(spreadsheet, int)("B1").should == ["A1", "A2"];
 }

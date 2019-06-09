@@ -21,9 +21,3 @@ template ValueType(S) {
     } else
         alias ValueType = S.Value;
 }
-
-
-template MaybeTask(Value) {
-    import std.typecons: Nullable;
-    alias MaybeTask = Nullable!(Value delegate() @safe pure);
-}

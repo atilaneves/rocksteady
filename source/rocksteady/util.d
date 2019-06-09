@@ -3,6 +3,9 @@ module rocksteady.util;
 
 K[] dependencies(alias tasks, V, K)(in K key) @safe pure {
 
+    import rocksteady.types: Leaf;
+    import sumtype: match;
+
     K[] ret;
 
     V fetch(in K key) {
@@ -12,10 +15,11 @@ K[] dependencies(alias tasks, V, K)(in K key) @safe pure {
     }
 
     auto maybeTask = tasks(key, &fetch);
-    if(maybeTask.isNull) return ret;
-
-    auto task = maybeTask.get;
-    task();
-
-    return ret;
+    return maybeTask.match!(
+        (Leaf _) => ret,
+        (V delegate() @safe pure task) {
+            task();
+            return ret;
+        }
+    );
 }

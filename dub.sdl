@@ -7,6 +7,8 @@ license "boost"
 targetType "executable"
 targetPath "bin"
 
+dependency "sumtype" version="*"
+
 
 configuration "executable" {
 

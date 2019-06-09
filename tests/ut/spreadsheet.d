@@ -4,27 +4,28 @@ module ut.spreadsheet;
 import ut;
 
 
-@("static")
+@("static2")
 @safe pure unittest {
 
-    import std.typecons: nullable;
+    alias K = string;
+    alias V = int;
 
-    static MaybeTask!int formulae(B)(auto ref B bs, in string cellName) {
+    static MaybeTask!V spreadsheet(B)(auto ref B bs, in K cellName) {
         switch(cellName) {
 
         default:  // leaf node
-            return typeof(return).init;
+            return leaf!V;
 
         case "B1": // B1: A1 + A2
-            return nullable(() => bs.fetch("A1") + bs.fetch("A2"));
+            return task(() => bs.fetch("A1") + bs.fetch("A2"));
 
         case "B2": // B2: B1 * 2
-            return nullable(() => bs.fetch("B1") * 2);
+            return task(() => bs.fetch("B1") * 2);
         }
     }
 
     auto store = ["A1": 10, "A2": 20];
-    auto b = busy!formulae(store);
+    auto b = busy!spreadsheet(store);
     store.should == ["A1": 10, "A2": 20];  // nothing happened yet
 
     b.build("B2");
@@ -33,27 +34,29 @@ import ut;
 }
 
 
+
 @("dynamic")
 @safe pure unittest {
 
-    import std.typecons: nullable;
+    alias K = string;
+    alias V = int;
 
-    static MaybeTask!int formulae(B)(auto ref B bs, in string cellName) {
+    static MaybeTask!V spreadsheet(B)(auto ref B bs, in K cellName) {
         switch(cellName) {
 
         default:  // leaf node
-            return typeof(return).init;
+            return leaf!V;
 
         case "B1": // B1: IF(C1=1,B2,A2)
-            return nullable(() => bs.fetch("C1") == 1 ? bs.fetch("B2") : bs.fetch("A2"));
+            return task(() => bs.fetch("C1") == 1 ? bs.fetch("B2") : bs.fetch("A2"));
 
         case "B2": // B2: IF(C1=1,A1,B1)
-            return nullable(() => bs.fetch("C1") == 1 ? bs.fetch("A1") : bs.fetch("B1"));
+            return task(() => bs.fetch("C1") == 1 ? bs.fetch("A1") : bs.fetch("B1"));
         }
     }
 
     auto store = ["A1": 10, "A2": 20, "C1": 1];
-    auto b = busy!formulae(store);
+    auto b = busy!spreadsheet(store);
     store.should == ["A1": 10, "A2": 20, "C1": 1];  // nothing happened yet
 
     b.build("B2");

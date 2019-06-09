@@ -1,6 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
+		"sumtype": "0.8.6",
 		"unit-threaded": "0.8.0"
 	}
 }
